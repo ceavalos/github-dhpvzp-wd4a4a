@@ -1,0 +1,204 @@
+<p-toast></p-toast>
+
+<div class="card">
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+      <button
+        pButton
+        pRipple
+        label="New"
+        icon="pi pi-plus"
+        class="p-button-success p-mr-2"
+        (click)="openNew()"
+      ></button>
+      <button
+        pButton
+        pRipple
+        [label]="Delete"
+        icon="pi pi-trash"
+        class="p-button-danger"
+        (click)="deleteSelectedEmpresa()"
+        [disabled]="!selectedEmpresas || !selectedEmpresas.length"
+      ></button>
+    </ng-template>
+
+    <ng-template pTemplate="right">
+      <button
+        pButton
+        pRipple
+        label="Export"
+        icon="pi pi-upload"
+        class="p-button-help"
+      ></button>
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    #dt
+    [value]="empresas"
+    [rows]="10"
+    [paginator]="true"
+    [globalFilterFields]="['nombre','representante']"
+    responsiveLayout="scroll"
+    [(selection)]="selectedEmpresas"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="p-d-flex p-ai-center p-jc-between">
+        <h5 class="p-m-0">Manage Empresas</h5>
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filterGlobal($event.target.value, 'contains')"
+            placeholder="Search..."
+          />
+        </span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th pSortableColumn="id">Id <p-sortIcon field="id"></p-sortIcon></th>
+        <th pSortableColumn="nombre">
+          Nombre <p-sortIcon field="nombre"></p-sortIcon>
+        </th>
+        <th pSortableColumn="direccion">
+          Direccion <p-sortIcon field="direccion"></p-sortIcon>
+        </th>
+        <th pSortableColumn="representante">
+          Representante <p-sortIcon field="representante"></p-sortIcon>
+        </th>
+        <th pSortableColumn="activa">
+          Activa <p-sortIcon field="activa"></p-sortIcon>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-empresa>
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="empresa"></p-tableCheckbox>
+        </td>
+        <td>{{ empresa.id }}</td>
+        <td>{{ empresa.nombre }}</td>
+        <td>{{ empresa.direccion }}</td>
+        <td>{{ empresa.representante }}</td>
+        <td>{{ empresa.activa }}</td>
+        <td>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-success mr-2"
+            (click)="editEmpresa(empresa)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-warning"
+            (click)="deleteEmpresa(empresa)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+        In total there are {{ empresas ? empresas.length : 0 }} empresas.
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+<p-dialog
+  [(visible)]="Dialog"
+  [style]="{ width: '450px' }"
+  header="Empresa Details"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <div class="field">
+      <label for="name">Nombre Empresa</label>
+      <input
+        type="text"
+        pInputText
+        id="name"
+        placeholder="Nombre de la Empresa"
+        [(ngModel)]="empresa.nombre"
+        required
+        autofocus
+      />
+      <small class="p-error" *ngIf="submitted && !empresa.nombre"
+        >Name is required.</small
+      >
+    </div>
+
+    <div class="p-field">
+      <label for="description">Direccion</label>
+      <textarea
+        id="direccion"
+        pInputTextarea
+        [(ngModel)]="empresa.direccion"
+        required
+        rows="3"
+        cols="20"
+      ></textarea>
+    </div>
+
+    <div class="p-field">
+      <label for="representante">Representate</label>
+
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="empresa.representante"
+        placeholder="Nombre del Representante"
+      />
+    </div>
+
+    <div class="field">
+      <label for="empresaStatus">Empresa Status</label>
+      <p-dropdown
+        [(ngModel)]="empresa.activa"
+        inputId="activa"
+        [options]="statuses"
+        placeholder="Select"
+      >
+        <ng-template let-option pTemplate="item">
+          <span [class]="'product-badge status-' + option.value">{{
+            option.label
+          }}</span>
+        </ng-template>
+      </p-dropdown>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      label="Cancel"
+      icon="pi pi-times"
+      class="p-button-text"
+      (click)="hideDialog()"
+    ></button>
+    <button
+      pButton
+      pRipple
+      label="Save"
+      icon="pi pi-check"
+      class="p-button-text"
+      (click)="saveEmpresa()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
