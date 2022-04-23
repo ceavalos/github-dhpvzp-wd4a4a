@@ -4,7 +4,8 @@ import { Empresa } from '../../modelos/empresa';
 import { ConfirmationService } from 'primeng/api';
 import { MessageService } from 'primeng/api';
 
-@Component({
+@Component({.
+  3.
   selector: 'app-empresa',
   templateUrl: './empresa.component.html',
   styleUrls: ['./empresa.component.css'],
